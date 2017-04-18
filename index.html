@@ -1,0 +1,188 @@
+<html>
+<head>
+<!--  <script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script> -->
+<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+<!--   <script src="http://cdn.oesmith.co.uk/morris-0.4.1.min.js"></script> -->
+<!--   <script	src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> -->
+ <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+<!-- <script type="text/javascript" -->
+<!-- 	src="https://www.google.com/jsapi?autoload={ -->
+<!--     'modules':[{ -->
+<!--       'name':'visualization', -->
+<!--       'version':'1', -->
+<!--       'packages':['corechart'] -->
+<!--     }] -->
+<!--   }"> -->
+  
+<!-- </script> -->
+ <style>
+      body {
+        margin: 0px;
+        padding: 0px;
+      }
+    </style>
+<meta charset=utf-8 />
+<!-- <meta http-equiv="refresh" content="4.99">   -->
+
+</head>
+<body>
+	     
+<!-- 	    <div id="chart" style="width: 1500px; height: 400px"></div> -->
+	    <canvas id="myCanvas" width="1100" height="600"></canvas>
+	
+	<script>
+	
+      $(document).ready(function () {
+     /*    var maxDataPoints = 10;
+        var chart = new google.visualization.LineChart($('#chart')[0]); 
+        var data = google.visualization.arrayToDataTable([ 
+            ['Time', 'Yahoo Temp','Current Temperature','Current Humidity'],
+            [getTime(), 0,0,0]
+        ]); 
+        var options = { 
+            title: 'Visualization of Environment Parameters',
+            hAxis: {title: 'Time', titleTextStyle: {color: '#333'}}, //Added hAxis and vAxis label
+            vAxis: {title: 'temp and humidity Value',  minValue: 0, titleTextStyle: {color: '#333'}},
+            curveType: 'function',
+            animation: {
+                duration: 1000,
+                easing: 'in'
+            },
+            legend: {position: 'bottom'}
+        };
+        function addDataPoint(dataPoint) { 
+        	console.log(dataPoint.value);
+            if (data.getNumberOfRows() > maxDataPoints) {
+                data.removeRow(0);
+            }
+            data.addRow([getTime(), dataPoint.value,dataPoint.value1,dataPoint.value2]);
+            chart.draw(data, options); 
+        }
+        function getTime() {
+            var d = new Date();
+            return d.toLocaleTimeString();
+        } */
+
+        
+	    function loadImages(sources, callback) {
+	        var images = {};
+			  
+	        var loadedImages = 0;
+	        var numImages = 0;
+	        // get num of sources
+	        for(var src in sources) {
+	          numImages++;
+	        }
+	        for(var src in sources) {
+	          images[src] = new Image();
+	          images[src].onload = function() {
+	            if(++loadedImages >= numImages) {
+	              callback(images);
+	            }
+	          };
+	        //  images[src].src = sources[src];
+				  images[src].src= sources[src];
+			
+
+	        }
+	      }
+        
+        var canvas = document.getElementById('myCanvas');
+	      var context = canvas.getContext('2d');
+	      context.font = "30px Georgia";
+	      
+	      
+		    
+		  		  var sources;
+	     /*  var sources=["images/lemon.jpg","images/ginger.jpg",
+						"images/honey.jpg","images/thyme.jpg",
+						"images/peppermint.jpg","images/cinnamon.jpg"];
+			 */
+			
+			 var list;
+// 			var list=["Lemon","Ginger","Honey","Thyme","Peppermint","Cinnamon"];
+		
+	
+
+
+ 			function addDataPoint(sources,list,title) { 
+ 				setInterval(function() {			    
+			loadImages(sources, function(images) {
+					  for(i in sources){
+						  context.clearRect(380, 10, 400, 30);
+							 context.setFillStyle = "0";
+						    context.fillText(title, 380, 30);
+						  if(i==0){
+
+							          context.drawImage(images[i], 100, 110, 200, 137);
+							          context.clearRect(130, 260, 150, 30);
+										 context.setFillStyle = "0";
+							        
+							          context.fillText(list[i], 130, 280);
+							         
+							  		  
+						  }
+						  else if(i==1){
+
+							          context.drawImage(images[i], 400, 110, 200, 137);
+							          context.clearRect(450, 260, 150, 30);
+										 context.setFillStyle = "0";
+									  context.fillText(list[i], 450, 280);
+						  }
+						  else if(i==2){
+
+							  context.drawImage(images[i], 700, 110, 200, 137);
+							  context.clearRect(750, 260, 150, 30);
+								 context.setFillStyle = "0";
+							  context.fillText(list[i], 750, 280);		
+						  }
+						          
+						  else if(i==3){
+
+							          context.drawImage(images[i], 100, 320, 200, 137);
+							          context.clearRect(130, 480, 150, 60);
+										 context.setFillStyle = "0";
+							  context.fillText(list[i], 130, 500);
+						  }
+
+						  else if(i==4){
+
+							          context.drawImage(images[i], 400, 320, 200, 137);
+							          context.clearRect(450, 480, 150, 60);
+										 context.setFillStyle = "0";
+							  context.fillText(list[i], 450, 500);
+						  }
+						  
+						  else if(i==5){
+
+							 context.drawImage(images[i], 700, 320, 200, 137);
+							 context.clearRect(750, 480, 150, 60);
+							 context.setFillStyle = "0";
+							 context.fillText(list[i], 750, 500);
+							 
+						  }
+						  
+						  			  
+					  }
+			 });
+ 				}, 5000);
+ 				}
+
+			
+        var socket = io.connect('http://192.168.0.103:8686');
+		  socket.on('m3data', function (data) {		
+		  console.log(data.image+"  "+data.label);
+		   sources=[];
+			 list=[]; 
+			    sources=data.image;
+			    list=data.label;
+			    title=data.title
+			  
+		  addDataPoint(sources,list,title);
+		   /*  sources=data.image;
+		    list=data.label */
+	 });
+   });
+	    </script> 
+</body>
+</html>
